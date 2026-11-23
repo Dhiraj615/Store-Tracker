@@ -1,6 +1,6 @@
 # Store Tracker - Stock, Sales & Credit for Small Stores
 
-🔴 Live Demo: https://dhiraj615.github.io/Store-Tracker/
+🔴 Live Demo: https://github.com/Dhiraj615/Store-Tracker
 
 ### About Me
 B.Tech IT Graduate (2026) | LNBCIEM, Raigaon | dhirajdisale007@gmail.com
@@ -30,7 +30,7 @@ HTML5, CSS3, JavaScript, localStorage, Power BI for analysis
 Email: dhirajdisale007@gmail.com
 LinkedIn: # Store Tracker - Stock, Sales & Credit for Small Stores
 
-🔴 Live Demo: https://dhiraj615.github.io/Store-Tracker/
+🔴 Live Demo: https://github.com/Dhiraj615/Store-Tracker
 
 ### Problem I Found
 I interviewed 9 retail store owners in Pune/Satara:
