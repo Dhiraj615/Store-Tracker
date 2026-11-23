@@ -32,9 +32,6 @@ LinkedIn: # Store Tracker - Stock, Sales & Credit for Small Stores
 
 🔴 Live Demo: https://dhiraj615.github.io/Store-Tracker/
 
-### About Me
-B.Tech IT Graduate (2026) | LNBCIEM, Raigaon | dhirajdisale007@gmail.com
-
 ### Problem I Found
 I interviewed 9 retail store owners in Pune/Satara:
 - 7/9 track stock in notebook
