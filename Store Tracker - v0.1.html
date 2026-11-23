@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Store Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Work+Sans:wght@400;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#ecece6;--panel:#fff;--ink:#1b1b1b;--mute:#4a4a4a;--line:#c8c8c0;--y:#f2c230;--g:#1f6b3a;--r:#d1361f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1b1b;--panel:#2a2a2a;--ink:#fff;--mute:#cfcfcf;--line:#444}}
+:root[data-theme="dark"]{--bg:#1b1b1b;--panel:#2a2a2a;--ink:#fff;--mute:#cfcfcf;--line:#444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Work Sans",system-ui,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h1{margin:0;font:900 52px/1 "Big Shoulders Display",sans-serif;color:var(--ink)}
+.top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.top span{color:var(--mute)}
+.demo{background:var(--panel);border:2px dashed var(--ink);padding:10px 12px;margin-bottom:14px;font-size:14px}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.btn{min-height:44px;padding:0 18px;border:0;background:var(--ink);color:var(--bg);font:800 20px "Big Shoulders Display",sans-serif;letter-spacing:.02em}
+.btn.y{background:var(--y);color:#1b1b1b}
+.btn.o{background:none;color:var(--ink);border:2px solid var(--ink)}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+nav button{flex:1 1 90px;min-height:44px;border:2px solid var(--ink);background:none;color:var(--ink);font:800 20px "Big Shoulders Display",sans-serif}
+nav button[aria-selected="true"]{background:var(--y);color:#1b1b1b;border-color:var(--y)}
+.blocks,.row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px}
+.blk{flex:1 1 250px;padding:18px}
+.blk .l{font-weight:600}.blk .n{font:900 84px/1 "Big Shoulders Display",sans-serif}
+.blk.y{background:var(--y);color:#1b1b1b}.blk.g{background:var(--g);color:#fff}.blk.r{background:var(--r);color:#fff}
+.pan{flex:1 1 300px;background:var(--panel);padding:18px}
+.pan h2{margin:0 0 12px;font-size:16px;font-weight:600}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px}
+.bars div{flex:1;background:var(--y)}.bars div.t{background:var(--ink)}
+.days{display:flex;gap:10px;font-size:13px;color:var(--mute);margin-top:4px}.days span{flex:1}
+.tag{display:flex;justify-content:space-between;background:#fff;color:#1b1b1b;border:2px dashed #1b1b1b;padding:9px 12px;margin-bottom:8px}
+.ud{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
+form.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;background:var(--panel);padding:14px;margin-bottom:14px;align-items:end}
+label{display:flex;flex-direction:column;font-size:14px;color:var(--mute);gap:3px}
+input,select{font:inherit;padding:9px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-width:0}
+.tbl{overflow-x:auto;background:var(--panel);margin-bottom:14px}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:14px;color:var(--mute);font-weight:600}.n2{text-align:right}
+tr.low td{color:var(--r);font-weight:600}
+.msg{min-height:24px;font-weight:600;margin-bottom:8px}.msg.err{color:var(--r)}.msg.ok{color:var(--g)}
+.rc{max-width:380px;margin:0 auto 14px;background:#f2f3ef;color:#1a1a1a;padding:22px 20px;font:15px/1.5 "Courier Prime",monospace}
+.rc .c{text-align:center}.rc .d{border-top:2px dashed #1a1a1a;margin:10px 0}.rc .s{display:flex;justify-content:space-between}
+@media print{body *{visibility:hidden}#receipt,#receipt *{visibility:visible}#receipt{position:absolute;left:0;top:0;width:100%}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><h1>STORE</h1><span id="today"></span></div>
+<div class="demo" id="demo">Sample data only: made-up items, customers and sales for demonstration. <button class="btn o" id="clr" style="min-height:36px;font-size:16px">Clear sample data</button></div>
+<nav role="tablist" id="nav">
+<button role="tab" data-t="dash" aria-selected="true">Dashboard</button>
+<button role="tab" data-t="sell" aria-selected="false">Make bill</button>
+<button role="tab" data-t="stock" aria-selected="false">Stock</button>
+<button role="tab" data-t="ud" aria-selected="false">Udhaar</button>
+</nav>
+<section id="dash"></section><section id="sell" hidden></section><section id="stock" hidden></section><section id="ud" hidden></section>
+</main>
+<script>
+(function(){
+var KEY="Store-tracker-v2",cart=[],last=null,msg=["",""];
+function dk(t){var d=new Date(t);return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function seed(){
+ var wk=[3900,4400,3600,5100,4700,6200],bills=[],i;
+ for(i=0;i<6;i++)bills.push({no:i+1,t:Date.now()-(6-i)*864e5,lines:[{name:"Sample sales",q:1,amt:wk[i]}],total:wk[i],cust:""});
+ bills.push({no:7,t:Date.now(),lines:[{name:"Sample sales",q:1,amt:3640}],total:3640,cust:""});
+ bills.push({no:8,t:Date.now(),lines:[{name:"Sample sales",q:1,amt:1220}],total:1220,cust:"Customer A"});
+ return {demo:true,items:[
+ {id:1,name:"Basmati rice 1 kg",price:95,qty:40,min:15},{id:2,name:"Toor dal 1 kg",price:140,qty:22,min:10},
+ {id:3,name:"Sugar 1 kg",price:46,qty:8,min:12},{id:4,name:"Tea 250 g",price:120,qty:18,min:8},
+ {id:5,name:"Sunflower oil 1 L",price:135,qty:6,min:10},{id:6,name:"Biscuits pack",price:10,qty:60,min:25},
+ {id:7,name:"Soap bar",price:38,qty:25,min:10},{id:8,name:"Detergent 500 g",price:62,qty:5,min:8}],
+ customers:[{id:1,name:"Customer A",owes:2100},{id:2,name:"Customer B",owes:1250},{id:3,name:"Customer C",owes:800}],bills:bills}
+}
+var S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=seed();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function rs(n){return "₹"+Number(n).toLocaleString("en-IN")}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function nid(a){return a.reduce(function(m,x){return Math.max(m,x.id||0)},0)+1}
+function find(a,id){return a.filter(function(x){return x.id==id})[0]}
+function sum(a){return a.reduce(function(t,x){return t+x},0)}
+
+function dash(){
+ var tk=dk(Date.now()),tb=S.bills.filter(function(b){return dk(b.t)===tk}),tot=sum(tb.map(function(b){return b.total})),cr=sum(tb.filter(function(b){return b.cust}).map(function(b){return b.total}));
+ var low=S.items.filter(function(i){return i.qty<=i.min}),owe=sum(S.customers.map(function(c){return c.owes})),nz=S.customers.filter(function(c){return c.owes>0});
+ var days=[],mx=1,i,D=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+ for(i=6;i>=0;i--){var t=Date.now()-i*864e5,v=sum(S.bills.filter(function(b){return dk(b.t)===dk(t)}).map(function(b){return b.total}));mx=Math.max(mx,v);days.push({v:v,d:i?D[new Date(t).getDay()]:"Today"})}
+ var h='<div class="blocks"><div class="blk y"><div class="l">Sales today</div><div class="n">'+rs(tot)+'</div><div>'+rs(tot-cr)+' cash. '+rs(cr)+' on udhaar.</div></div>'+
+ '<div class="blk g"><div class="l">Items to restock</div><div class="n">'+low.length+'</div><div>Stock value '+rs(sum(S.items.map(function(i){return i.qty*i.price})))+' across '+S.items.length+' items.</div></div>'+
+ '<div class="blk r"><div class="l">Udhaar pending</div><div class="n">'+rs(owe)+'</div><div>'+nz.length+' customer'+(nz.length===1?"":"s")+' owe you.</div></div></div>';
+ h+='<div class="row"><div class="pan" style="flex:2 1 420px"><h2>Sales, last 7 days</h2><div class="bars">'+days.map(function(d,k){return '<div class="'+(k===6?"t":"")+'" style="height:'+Math.max(4,Math.round(d.v/mx*150))+'px" title="'+rs(d.v)+'"></div>'}).join("")+'</div><div class="days">'+days.map(function(d){return '<span>'+d.d+'</span>'}).join("")+'</div></div>';
+ h+='<div class="pan"><h2>Restock now</h2>'+(low.length?low.map(function(i){return '<div class="tag"><span>'+esc(i.name)+'</span><b>'+i.qty+' left</b></div>'}).join(""):'<p>Nothing is running low.</p>')+'</div>';
+ h+='<div class="pan"><h2>Who owes you</h2>'+(nz.length?nz.map(function(c){return '<div class="ud"><span>'+esc(c.name)+'</span><b>'+rs(c.owes)+'</b></div>'}).join(""):'<p>No udhaar pending.</p>')+'</div></div>';
+ $("dash").innerHTML=h}
+
+function sell(){
+ var total=sum(cart.map(function(l){return l.amt}));
+ var h='<form class="f" id="addL"><label>Item<select name="i">'+S.items.map(function(i){return '<option value="'+i.id+'">'+esc(i.name)+' ('+i.qty+' left)</option>'}).join("")+'</select></label><label>Quantity<input name="q" type="number" min="1" value="1" required></label><button class="btn y" type="submit">Add to bill</button></form>';
+ h+='<div class="tbl"><table><thead><tr><th>Item</th><th class="n2">Qty</th><th class="n2">Amount</th></tr></thead><tbody>'+(cart.length?cart.map(function(l){return '<tr><td>'+esc(l.name)+'</td><td class="n2">'+l.q+'</td><td class="n2">'+rs(l.amt)+'</td></tr>'}).join(""):'<tr><td colspan="3">Add items to start a bill.</td></tr>')+'</tbody></table></div>';
+ h+='<form class="f" id="mk"><label>Payment<select name="c"><option value="">Cash</option>'+S.customers.map(function(c){return '<option value="'+c.id+'">Udhaar: '+esc(c.name)+'</option>'}).join("")+'</select></label><div style="font:900 40px/1 \'Big Shoulders Display\',sans-serif">Total '+rs(total)+'</div><button class="btn" type="submit"'+(cart.length?"":" disabled")+'>Make bill</button></form>';
+ h+='<div class="msg '+msg[1]+'" role="status">'+msg[0]+'</div>';
+ if(last){h+='<div class="rc" id="receipt"><div class="c" style="font-weight:700;font-size:19px">DUKAAN TRACKER</div><div class="c">Bill no. '+last.no+'. '+new Date(last.t).toLocaleString("en-IN")+'</div><div class="d"></div>'+
+ last.lines.map(function(l){return '<div class="s"><span>'+esc(l.name)+' x'+l.q+'</span><span>'+rs(l.amt)+'</span></div>'}).join("")+'<div class="d"></div><div class="s" style="font-weight:700;font-size:19px"><span>TOTAL</span><span>'+rs(last.total)+'</span></div><div>'+(last.cust?"On udhaar: "+esc(last.cust):"Paid in cash")+'</div><div class="d"></div><div class="c">Thank you. Visit again.</div></div><div style="text-align:center;margin-bottom:14px"><button class="btn o" id="pr">Print bill</button></div>'}
+ $("sell").innerHTML=h;
+ $("addL").onsubmit=function(e){e.preventDefault();var f=e.target,it=find(S.items,f.i.value),q=+f.q.value;if(!it)return;
+  var inCart=sum(cart.filter(function(l){return l.id==it.id}).map(function(l){return l.q}));
+  if(q+inCart>it.qty){msg=["Only "+it.qty+" of "+it.name+" in stock.","err"];return sell()}
+  cart.push({id:it.id,name:it.name,q:q,amt:q*it.price});msg=["",""];sell()};
+ $("mk").onsubmit=function(e){e.preventDefault();if(!cart.length)return;var c=e.target.c.value?find(S.customers,e.target.c.value):null;
+  cart.forEach(function(l){find(S.items,l.id).qty-=l.q});if(c)c.owes+=total;
+  last={no:S.bills.length+1,t:Date.now(),lines:cart.map(function(l){return{name:l.name,q:l.q,amt:l.amt}}),total:total,cust:c?c.name:""};
+  S.bills.push(last);cart=[];msg=["Bill "+last.no+" saved: "+rs(last.total)+".","ok"];save();all()};
+ if($("pr"))$("pr").onclick=function(){window.print()}}
+
+function stock(){
+ var h='<form class="f" id="ai"><label>Item name<input name="n" required></label><label>Price (₹)<input name="p" type="number" min="0" required></label><label>Quantity<input name="q" type="number" min="0" required></label><label>Restock when below<input name="m" type="number" min="0" value="5" required></label><button class="btn y" type="submit">Add item</button></form>';
+ h+='<div class="tbl"><table><thead><tr><th>Item</th><th class="n2">Price</th><th class="n2">In stock</th><th>Status</th></tr></thead><tbody>'+(S.items.length?S.items.map(function(i){var l=i.qty<=i.min;return '<tr class="'+(l?"low":"")+'"><td>'+esc(i.name)+'</td><td class="n2">'+rs(i.price)+'</td><td class="n2">'+i.qty+'</td><td>'+(l?"Restock":"OK")+'</td></tr>'}).join(""):'<tr><td colspan="4">No items yet. Add your first item above.</td></tr>')+'</tbody></table></div>';
+ $("stock").innerHTML=h;
+ $("ai").onsubmit=function(e){e.preventDefault();var f=e.target;S.items.push({id:nid(S.items),name:f.n.value.trim(),price:+f.p.value,qty:+f.q.value,min:+f.m.value});save();all()}}
+
+function ud(){
+ var h='<form class="f" id="ac"><label>Customer name<input name="n" required></label><button class="btn y" type="submit">Add customer</button></form>';
+ h+='<div class="tbl"><table><thead><tr><th>Customer</th><th class="n2">Owes</th><th>Payment received (₹)</th></tr></thead><tbody>'+(S.customers.length?S.customers.map(function(c){return '<tr><td>'+esc(c.name)+'</td><td class="n2"><b>'+rs(c.owes)+'</b></td><td><form class="pay" data-id="'+c.id+'" style="display:flex;gap:6px"><input name="a" type="number" min="1" max="'+c.owes+'" style="width:100px" aria-label="Payment from '+esc(c.name)+'"'+(c.owes?"":" disabled")+'><button class="btn o" style="min-height:40px;font-size:17px" type="submit"'+(c.owes?"":" disabled")+'>Save</button></form></td></tr>'}).join(""):'<tr><td colspan="3">No customers yet.</td></tr>')+'</tbody></table></div>';
+ $("ud").innerHTML=h;
+ $("ac").onsubmit=function(e){e.preventDefault();S.customers.push({id:nid(S.customers),name:e.target.n.value.trim(),owes:0});save();all()};
+ Array.prototype.forEach.call(document.querySelectorAll(".pay"),function(f){f.onsubmit=function(e){e.preventDefault();var c=find(S.customers,f.dataset.id),a=+f.a.value;if(a>0&&a<=c.owes){c.owes-=a;save();all()}}})}
+
+function all(){dash();sell();stock();ud();$("demo").hidden=!S.demo;$("today").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"})}
+Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){b.onclick=function(){
+ Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(x){x.setAttribute("aria-selected",x===b)});
+ ["dash","sell","stock","ud"].forEach(function(id){$(id).hidden=id!==b.dataset.t})}});
+$("clr").onclick=function(){S={demo:false,items:[],customers:[],bills:[]};cart=[];last=null;save();all()};
+all();
+})();
+</script>
+</body>
+</html>
